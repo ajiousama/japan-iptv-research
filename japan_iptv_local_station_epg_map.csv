@@ -1,11 +1,11 @@
 channel_key,display_name,region,category,tvg_id_preferred,tvg_id_alternates,display_aliases,epg_priority,source_registry,confidence,next_action,notes
 chiba_tv,チバテレ,千葉,地方局,chiba_tv,"chibatv;ChibaTV;千葉テレビ",チバテレ;千葉テレビ;Chiba TV,高,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,DTV2系でA候補。現行guides.xmlでは未確認。
-tvk,tvk,神奈川,地方局,tvk,"TVK;tvk_kanagawa;テレビ神奈川",tvk;テレビ神奈川;TV Kanagawa,高,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,DTV2系でA候補。現行guides.xmlでは未確認。
-teletama,テレ玉,埼玉,地方局,teletama,"tvs;TVS;テレ玉;テレビ埼玉",テレ玉;テレビ埼玉;Teletama,高,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,DTV2系ではtvs表記も出るため別名扱い。現行guides.xmlでは未確認。
-tokyo_mx2,TOKYO MX2,東京,地方局,tokyo_mx2,"mx2;TOKYO_MX2;TokyoMX2",TOKYO MX2;MX2,高,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,MX1とは分離して管理。TOKYO・MX_jpはMX1表示のため保留。
+tvk,tvk,神奈川,地方局,テレビ神奈川_jp,"tvk;TVK;tvk_kanagawa;テレビ神奈川",tvk;テレビ神奈川;TV Kanagawa,高,japan_iptv_local_station_a_candidates.csv,高,確認済み,外部EPG候補でテレビ神奈川_jpを確認。tvk表記のM3UはこのIDへ寄せる。
+teletama,テレ玉,埼玉,地方局,テレ玉_jp,"teletama;tvs;TVS;テレビ埼玉",テレ玉;テレビ埼玉;Teletama,高,japan_iptv_local_station_a_candidates.csv,高,確認済み,外部EPG候補でテレ玉_jpを確認。DTV2系のtvs表記は別名扱い。
+tokyo_mx2,TOKYO MX2,東京,地方局,TOKYO・MX2_jp,"tokyo_mx2;mx2;TOKYO_MX2;TokyoMX2",TOKYO MX2;MX2,高,japan_iptv_local_station_a_candidates.csv,高,確認済み,外部EPG候補でTOKYO・MX2_jpを確認。MX1のTOKYO・MX_jpとは分離。
 tss,テレビ新広島,広島,地方局,tss,"tss_tv;TSS;テレビ新広島",テレビ新広島;TSS,中,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,DTV2系の地方局拡張候補。現行guides.xmlでは未確認。
 kbs_kyoto,KBS京都,京都,地方局,KBS京都_jp,"kbs_kyoto;kbs;KBS;KBS京都",KBS京都;KBS,高,japan_iptv_local_station_a_candidates.csv,高,確認済み,現行guides.xmlでKBS京都_jpを確認。
 sun_tv,サンテレビ,兵庫,地方局,サンテレビ_jp,"sun_tv;suntv;SUN;SUN_TV;サンテレビ",サンテレビ;SUN TV,高,japan_iptv_local_station_a_candidates.csv,高,確認済み,現行guides.xmlでサンテレビ_jpを確認。
-mbs,MBS,大阪,広域局,mbs,"MBS;mbs_osaka;毎日放送",MBS;毎日放送,中,japan_iptv_local_station_a_candidates.csv,中,EPG実データと照合,現行guides.xmlではMBSテレビ未確認。radiko.MBSはラジオのため除外。
+mbs,MBS,大阪,広域局,毎日テレビ_jp,"mbs;MBS;mbs_osaka;毎日放送;毎日テレビ",MBS;毎日放送;毎日テレビ,中,japan_iptv_local_station_a_candidates.csv,中,確認済み,外部EPG候補で毎日テレビ_jpを確認。radiko.MBSはラジオのため除外。
 abc,ABC,大阪,広域局,ABCテレビ_jp,"abc;ABC;abc_tv;asahi_broadcasting;ABCテレビ",ABC;ABCテレビ;朝日放送テレビ,中,japan_iptv_local_station_a_candidates.csv,高,確認済み,現行guides.xmlでABCテレビ_jpを確認。
 ytv,YTV,大阪,広域局,読売テレビ_jp,"ytv;YTV;yomiuri_tv;読売テレビ",YTV;読売テレビ;よみうりテレビ,中,japan_iptv_local_station_a_candidates.csv,高,確認済み,現行guides.xmlで読売テレビ_jpを確認。
