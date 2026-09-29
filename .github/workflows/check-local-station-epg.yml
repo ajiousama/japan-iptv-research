@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/check-local-station-epg.yml'
       - 'scripts/check_local_station_epg_ids.py'
+      - 'scripts/suggest_local_station_epg_ids.py'
       - 'japan_iptv_local_station_epg_map.csv'
       - 'japan_iptv_local_station_aliases.csv'
   workflow_dispatch:
@@ -23,6 +24,10 @@ on:
         description: 'Output CSV path'
         required: true
         default: 'local_station_epg_check_result.csv'
+      suggestion_out_path:
+        description: 'Suggestion CSV path'
+        required: true
+        default: 'local_station_epg_id_suggestions.csv'
 
 permissions:
   contents: read
@@ -46,6 +51,7 @@ jobs:
           EPG_URL="${{ github.event.inputs.epg_url }}"
           MAP_PATH="${{ github.event.inputs.map_path }}"
           OUT_PATH="${{ github.event.inputs.out_path }}"
+          SUGGESTION_OUT_PATH="${{ github.event.inputs.suggestion_out_path }}"
 
           if [ -z "$EPG_URL" ]; then
             EPG_URL="https://raw.githubusercontent.com/ajiousama/himitsu/main/guides.xml"
@@ -56,10 +62,14 @@ jobs:
           if [ -z "$OUT_PATH" ]; then
             OUT_PATH="local_station_epg_check_result.csv"
           fi
+          if [ -z "$SUGGESTION_OUT_PATH" ]; then
+            SUGGESTION_OUT_PATH="local_station_epg_id_suggestions.csv"
+          fi
 
           echo "epg_url=$EPG_URL" >> "$GITHUB_OUTPUT"
           echo "map_path=$MAP_PATH" >> "$GITHUB_OUTPUT"
           echo "out_path=$OUT_PATH" >> "$GITHUB_OUTPUT"
+          echo "suggestion_out_path=$SUGGESTION_OUT_PATH" >> "$GITHUB_OUTPUT"
 
       - name: Download EPG XML
         run: |
@@ -75,6 +85,14 @@ jobs:
             --map "${{ steps.vars.outputs.map_path }}" \
             --out "${{ steps.vars.outputs.out_path }}"
 
+      - name: Suggest possible EPG IDs
+        run: |
+          python3 scripts/suggest_local_station_epg_ids.py \
+            --epg epg.xml \
+            --map "${{ steps.vars.outputs.map_path }}" \
+            --out "${{ steps.vars.outputs.suggestion_out_path }}" \
+            --top 5
+
       - name: Print result
         run: |
           echo '## Local station EPG check' >> "$GITHUB_STEP_SUMMARY"
@@ -82,10 +100,18 @@ jobs:
           echo '```csv' >> "$GITHUB_STEP_SUMMARY"
           cat "${{ steps.vars.outputs.out_path }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Possible EPG ID suggestions' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '```csv' >> "$GITHUB_STEP_SUMMARY"
+          cat "${{ steps.vars.outputs.suggestion_out_path }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload result artifact
+      - name: Upload result artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: local-station-epg-check-result
-          path: ${{ steps.vars.outputs.out_path }}
+          name: local-station-epg-check-results
+          path: |
+            ${{ steps.vars.outputs.out_path }}
+            ${{ steps.vars.outputs.suggestion_out_path }}
           if-no-files-found: error
