@@ -1,0 +1,91 @@
+name: Check local station EPG IDs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/check-local-station-epg.yml'
+      - 'scripts/check_local_station_epg_ids.py'
+      - 'japan_iptv_local_station_epg_map.csv'
+      - 'japan_iptv_local_station_aliases.csv'
+  workflow_dispatch:
+    inputs:
+      epg_url:
+        description: 'XMLTV EPG URL to check against'
+        required: true
+        default: 'https://raw.githubusercontent.com/ajiousama/himitsu/main/guides.xml'
+      map_path:
+        description: 'Local-station EPG map CSV path'
+        required: true
+        default: 'japan_iptv_local_station_epg_map.csv'
+      out_path:
+        description: 'Output CSV path'
+        required: true
+        default: 'local_station_epg_check_result.csv'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-local-station-epg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set inputs
+        id: vars
+        run: |
+          EPG_URL="${{ github.event.inputs.epg_url }}"
+          MAP_PATH="${{ github.event.inputs.map_path }}"
+          OUT_PATH="${{ github.event.inputs.out_path }}"
+
+          if [ -z "$EPG_URL" ]; then
+            EPG_URL="https://raw.githubusercontent.com/ajiousama/himitsu/main/guides.xml"
+          fi
+          if [ -z "$MAP_PATH" ]; then
+            MAP_PATH="japan_iptv_local_station_epg_map.csv"
+          fi
+          if [ -z "$OUT_PATH" ]; then
+            OUT_PATH="local_station_epg_check_result.csv"
+          fi
+
+          echo "epg_url=$EPG_URL" >> "$GITHUB_OUTPUT"
+          echo "map_path=$MAP_PATH" >> "$GITHUB_OUTPUT"
+          echo "out_path=$OUT_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Download EPG XML
+        run: |
+          curl --fail --location --retry 3 --retry-delay 5 \
+            --output epg.xml \
+            "${{ steps.vars.outputs.epg_url }}"
+          ls -lh epg.xml
+
+      - name: Run local station EPG check
+        run: |
+          python3 scripts/check_local_station_epg_ids.py \
+            --epg epg.xml \
+            --map "${{ steps.vars.outputs.map_path }}" \
+            --out "${{ steps.vars.outputs.out_path }}"
+
+      - name: Print result
+        run: |
+          echo '## Local station EPG check' >> "$GITHUB_STEP_SUMMARY"
+          echo '' >> "$GITHUB_STEP_SUMMARY"
+          echo '```csv' >> "$GITHUB_STEP_SUMMARY"
+          cat "${{ steps.vars.outputs.out_path }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload result artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-station-epg-check-result
+          path: ${{ steps.vars.outputs.out_path }}
+          if-no-files-found: error
