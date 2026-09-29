@@ -1,0 +1,14 @@
+# Private local IPTV working files
+local_station_private.csv
+local_station_private.m3u
+local_station_dummy.m3u
+public_sports_with_local.m3u
+*_private.csv
+*_private.m3u
+*_epg_check_result.csv
+
+# Local editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
