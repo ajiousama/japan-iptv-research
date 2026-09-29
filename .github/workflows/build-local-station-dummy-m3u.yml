@@ -1,0 +1,38 @@
+name: Build local station dummy M3U
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "japan_iptv_local_station_m3u_private_template.csv"
+      - "scripts/build_local_station_m3u_from_private_csv.py"
+      - ".github/workflows/build-local-station-dummy-m3u.yml"
+
+jobs:
+  build-dummy-m3u:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build dummy M3U
+        run: |
+          python3 scripts/build_local_station_m3u_from_private_csv.py \
+            --csv japan_iptv_local_station_m3u_private_template.csv \
+            --out local_station_dummy.m3u \
+            --placeholder-url-base https://example.invalid/local-station/
+
+      - name: Validate dummy M3U shape
+        run: |
+          test "$(grep -c '^#EXTINF' local_station_dummy.m3u)" -eq 10
+          grep -q '#EXTM3U' local_station_dummy.m3u
+          grep -q '# Generated entries: 10' local_station_dummy.m3u
+          grep -q 'example.invalid' local_station_dummy.m3u
+          sed -n '1,28p' local_station_dummy.m3u
+
+      - name: Upload dummy M3U
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-station-dummy-m3u
+          path: local_station_dummy.m3u
+          if-no-files-found: error
